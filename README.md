@@ -3,7 +3,7 @@
 A native macOS app for removing (cropping) the margins of PDF documents in bulk.
 Draw a single box once, and the same crop is applied across hundreds of pages at once — without ever modifying the original file.
 
-> 📄 A macOS app that crops away PDF margins. Inspired by [pdffit.app](https://pdffit.app).
+
 
 ---
 
