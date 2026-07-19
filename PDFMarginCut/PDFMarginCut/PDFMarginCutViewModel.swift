@@ -30,6 +30,14 @@ final class PDFMarginCutViewModel {
     // MARK: - Settings
 
     var mode: CropMode = .all
+    var appMode: AppMode = .crop {
+        didSet {
+            // 크롭 모드로 전환 시 오버레이가 없으면 생성
+            if appMode == .crop, document != nil, overlayImageAll == nil {
+                scheduleOverlayRegen(debounce: false)
+            }
+        }
+    }
     var overlayBlendMode: OverlayBlendMode = .union {
         didSet { scheduleOverlayRegen(debounce: false) }
     }
@@ -44,6 +52,8 @@ final class PDFMarginCutViewModel {
     }
 
     private var overlayRegenTask: Task<Void, Never>?
+    // loadPDF 진행 중 didSet으로 인한 중복 오버레이 생성을 억제하는 플래그
+    private var isLoading = false
 
     // MARK: - Status
 
@@ -66,6 +76,8 @@ final class PDFMarginCutViewModel {
             statusMessage = "PDF를 열 수 없습니다."
             return
         }
+        // isLoading 구간: startPageText/endPageText의 didSet이 발화해도 재생성 억제
+        isLoading = true
         document  = doc
         sourceURL = url
         filename  = url.lastPathComponent
@@ -76,12 +88,15 @@ final class PDFMarginCutViewModel {
         cropRectOdd   = .zero
         cropRectEven  = .zero
         statusMessage = "\(pageCount)페이지 로드됨"
-        Task { await generateOverlay() }
+        isLoading = false
+
+        scheduleOverlayRegen(debounce: false)
     }
 
     // MARK: - Overlay Generation
 
     private func scheduleOverlayRegen(debounce: Bool) {
+        guard !isLoading else { return }
         overlayRegenTask?.cancel()
         overlayRegenTask = Task {
             if debounce {
@@ -93,6 +108,13 @@ final class PDFMarginCutViewModel {
     }
 
     func generateOverlay() async {
+        // 뷰어 모드에서는 크롭 오버레이를 생성하지 않는다
+        guard appMode == .crop else {
+            overlayImageAll  = nil
+            overlayImageOdd  = nil
+            overlayImageEven = nil
+            return
+        }
         guard let url = sourceURL, pageCount > 0 else { return }
         isGeneratingOverlay = true
         defer { isGeneratingOverlay = false }

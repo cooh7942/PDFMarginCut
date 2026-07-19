@@ -56,3 +56,6 @@ fastlane/test_output
 
 # Instruments
 *.trace
+
+# 작업용 프롬프트 문서 (소스에 포함하지 않음)
+XCODE_*.md

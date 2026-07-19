@@ -4,13 +4,12 @@ import UniformTypeIdentifiers
 
 struct ContentView: View {
     @State private var vm = PDFMarginCutViewModel()
-    @State private var appMode: AppMode = .crop
 
     var body: some View {
         VStack(spacing: 0) {
             titleBar
             Divider()
-            switch appMode {
+            switch vm.appMode {
             case .crop:
                 previewArea
                 Divider()
@@ -39,7 +38,7 @@ struct ContentView: View {
 
             Spacer()
 
-            Picker("앱 모드", selection: $appMode) {
+            Picker("앱 모드", selection: $vm.appMode) {
                 ForEach(AppMode.allCases) { mode in
                     Text(mode.rawValue).tag(mode)
                 }
