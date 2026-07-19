@@ -1,7 +1,7 @@
 # PDFMarginCut
 
-A native macOS app for removing (cropping) the margins of PDF documents in bulk.
-Draw a single box once, and the same crop is applied across hundreds of pages at once — without ever modifying the original file.
+A native macOS app for removing (cropping) the margins of PDF documents in bulk — with a built-in PDF reader.
+Draw a single box once, and the same crop is applied across hundreds of pages at once — without ever modifying the original file. Then switch to **Viewer** mode to read the document, with thumbnails and page navigation.
 ![App Icon](ScreenShot.png)
 
 ---
@@ -14,7 +14,14 @@ Scanned books, papers, and reports often carry wide, wasted margins that make on
 
 Cropping is **non-destructive**: it sets each page's PDF *CropBox* rather than deleting content, and always writes to a new file (`<name>_crop.pdf`). Your original PDF is never touched.
 
+The app has two modes, switchable from the top of the window:
+
+- **Crop** — the margin-cropping workflow described above.
+- **Viewer** — a built-in reader with a thumbnail sidebar, page navigation, and per-file reading position.
+
 ### Features
+
+#### Crop mode
 
 - **Overlap preview** — All pages (or odd/even pages) are composited onto one canvas so the content area is immediately visible.
 - **Two overlay modes**
@@ -25,6 +32,13 @@ Cropping is **non-destructive**: it sets each page's PDF *CropBox* rather than d
 - **Odd / even layout** — Books and papers often have different margins on odd vs. even pages. Choose *All* for one box, or *Odd / Even* to set a separate box for each.
 - **Safe save** — Saves as `<original name>_crop.pdf`. The original is never modified.
 - **Progress feedback** — A spinner is shown while the overlap preview is (re)generated.
+
+#### Viewer mode
+
+- **Read your PDF** — A full reader view, with an optional **single / two-page** layout.
+- **Thumbnail sidebar** — Scroll through every page on the left; click a thumbnail to jump to it. The panel can be collapsed and reopened.
+- **Page navigation** — Move with the **← / →** arrow keys, **Space** for the next page, or the on-hover **arrow buttons** overlaid on the page (they fade out when the mouse is idle).
+- **Resume where you left off** — The last page you read is remembered per file (by filename); reopening the same file in Viewer mode returns you to that page.
 
 ### Requirements
 
@@ -43,6 +57,8 @@ Then build and run in Xcode (`Cmd+R`). To run the unit tests, use `Cmd+U`.
 
 ### Usage
 
+**Crop**
+
 1. Click **Open PDF…** or drag a PDF onto the window.
 2. (Optional) Choose the **Odd / Even** mode if odd and even pages have different margins.
 3. (Optional) Set the **page range** to apply the crop to.
@@ -50,11 +66,19 @@ Then build and run in Xcode (`Cmd+R`). To run the unit tests, use `Cmd+U`.
 5. Drag a box around the content you want to keep; adjust with the handles.
 6. Click **Save Cropped PDF…** — the result is saved as `<name>_crop.pdf`.
 
+**Viewer**
+
+1. Switch to **Viewer** using the mode selector at the top.
+2. Navigate with the arrow keys, Space, the on-hover arrow buttons, or the thumbnail sidebar.
+3. Toggle **two-page** layout or collapse the thumbnails as you like.
+4. Reopen the same file later to resume from your last read page.
+
 ### How it works
 
 - Rendering and page cropping use Apple's **PDFKit**; the UI is **SwiftUI**.
 - The crop box is stored as **normalized (0–1) coordinates** relative to the displayed page, then mapped to each page's `mediaBox` at save time — so the crop stays accurate regardless of window size or letterboxing.
 - Cropping sets each page's `CropBox`, keeping the underlying content intact.
+- The viewer uses `PDFView` and `PDFThumbnailView`; reading position is persisted per filename via `UserDefaults`.
 
 ### Tech stack
 
@@ -76,7 +100,14 @@ _TBD._
 
 크롭은 **비파괴 방식**입니다. 내용을 삭제하지 않고 각 페이지의 PDF *CropBox*를 설정하며, 항상 새 파일(`원본이름_crop.pdf`)로 저장합니다. 원본 PDF는 절대 수정하지 않습니다.
 
+창 상단에서 전환할 수 있는 두 가지 모드가 있습니다.
+
+- **크롭(Crop)** — 위에서 설명한 여백 제거 작업.
+- **뷰어(Viewer)** — 썸네일 사이드바·페이지 이동·파일별 읽은 위치 기억이 있는 내장 리더.
+
 ### 주요 기능
+
+#### 크롭 모드
 
 - **겹침 미리보기** — 전체 페이지(또는 홀수/짝수 페이지)를 한 장에 합성해 내용 영역을 바로 파악할 수 있습니다.
 - **두 가지 오버레이 모드**
@@ -87,6 +118,13 @@ _TBD._
 - **홀수/짝수 레이아웃** — 책·논문은 홀수 쪽과 짝수 쪽 여백이 다를 수 있습니다. *All*로 하나의 박스를 쓰거나, *Odd / Even*으로 홀·짝 각각의 박스를 지정하세요.
 - **안전한 저장** — `원본이름_crop.pdf`로 저장하며, 원본은 절대 수정하지 않습니다.
 - **진행 표시** — 겹침 미리보기를 (재)생성하는 동안 스피너가 표시됩니다.
+
+#### 뷰어 모드
+
+- **PDF 읽기** — 전체 리더 화면. **한 페이지 / 두 페이지** 보기를 선택할 수 있습니다.
+- **썸네일 사이드바** — 좌측에서 전체 페이지를 세로로 스크롤하고, 썸네일을 클릭하면 해당 페이지로 이동합니다. 사이드바는 접었다 다시 펼 수 있습니다.
+- **페이지 이동** — **← / →** 방향키, **스페이스바**(다음 페이지), 또는 페이지 위에 마우스를 올리면 나타나는 **화살표 버튼**(마우스가 멈추면 사라짐)으로 이동합니다.
+- **이어 읽기** — 마지막으로 읽은 페이지를 파일별(파일 이름 기준)로 기억해, 같은 파일을 뷰어로 다시 열면 그 페이지부터 이어서 읽습니다.
 
 ### 요구 사항
 
@@ -105,6 +143,8 @@ open PDFMarginCut.xcodeproj
 
 ### 사용 방법
 
+**크롭**
+
 1. **Open PDF…** 를 클릭하거나 창에 PDF를 드래그합니다.
 2. (선택) 홀수·짝수 페이지 여백이 다르면 **Odd / Even** 모드를 선택합니다.
 3. (선택) 크롭을 적용할 **페이지 범위**를 지정합니다.
@@ -112,11 +152,19 @@ open PDFMarginCut.xcodeproj
 5. 남길 내용 주위로 박스를 드래그하고, 핸들로 미세 조정합니다.
 6. **Save Cropped PDF…** 를 클릭하면 `원본이름_crop.pdf`로 저장됩니다.
 
+**뷰어**
+
+1. 상단 모드 선택에서 **Viewer** 로 전환합니다.
+2. 방향키·스페이스바, 마우스 화살표 버튼, 또는 썸네일 사이드바로 페이지를 이동합니다.
+3. 필요하면 **두 페이지 보기**를 켜거나 썸네일을 접습니다.
+4. 나중에 같은 파일을 다시 열면 마지막으로 읽던 페이지부터 이어집니다.
+
 ### 작동 원리
 
 - 렌더링과 페이지 크롭은 Apple의 **PDFKit**, UI는 **SwiftUI**로 구현했습니다.
 - 크롭 박스는 표시된 페이지 기준 **정규화(0~1) 좌표**로 저장되며, 저장 시 각 페이지의 `mediaBox`에 매핑됩니다. 덕분에 창 크기나 레터박스와 무관하게 크롭이 정확하게 적용됩니다.
 - 크롭은 각 페이지의 `CropBox`를 설정하는 방식이라, 원본 내용은 그대로 보존됩니다.
+- 뷰어는 `PDFView`와 `PDFThumbnailView`를 사용하며, 읽은 위치는 파일 이름 기준으로 `UserDefaults`에 저장됩니다.
 
 ### 기술 스택
 

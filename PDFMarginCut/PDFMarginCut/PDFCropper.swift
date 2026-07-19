@@ -1,6 +1,15 @@
 import Foundation
 import PDFKit
 
+// MARK: - AppMode
+
+enum AppMode: String, CaseIterable, Identifiable {
+    case crop   = "Crop"
+    case viewer = "Viewer"
+
+    var id: String { rawValue }
+}
+
 // MARK: - CropMode
 
 enum CropMode: String, CaseIterable, Identifiable {

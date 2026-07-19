@@ -4,14 +4,20 @@ import UniformTypeIdentifiers
 
 struct ContentView: View {
     @State private var vm = PDFMarginCutViewModel()
+    @State private var appMode: AppMode = .crop
 
     var body: some View {
         VStack(spacing: 0) {
             titleBar
             Divider()
-            previewArea
-            Divider()
-            controlBar
+            switch appMode {
+            case .crop:
+                previewArea
+                Divider()
+                controlBar
+            case .viewer:
+                ViewerView(vm: vm)
+            }
         }
         .frame(minWidth: 800, minHeight: 600)
         .onDrop(of: [.fileURL], isTargeted: nil, perform: handleDrop)
@@ -30,7 +36,20 @@ struct ContentView: View {
                     .foregroundStyle(.secondary)
                     .font(.subheadline)
             }
+
             Spacer()
+
+            Picker("앱 모드", selection: $appMode) {
+                ForEach(AppMode.allCases) { mode in
+                    Text(mode.rawValue).tag(mode)
+                }
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 140)
+            .labelsHidden()
+
+            Spacer()
+
             if vm.isGeneratingOverlay {
                 ProgressView()
                     .scaleEffect(0.6)
