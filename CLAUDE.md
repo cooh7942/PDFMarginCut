@@ -5,7 +5,7 @@ macOS용 PDF 여백 제거(크롭) 앱. Xcode 프로젝트.
 ## 기술 스택
 - Swift 5.9+ / SwiftUI (앱 셸 · UI)
 - PDFKit (PDF 렌더링 · 페이지 크롭)
-- 최소 배포 타겟: macOS 14 (Sonoma) — `@Observable`(Observation 프레임워크) 사용을 위해 macOS 14 이상 필요
+- 최소 배포 타겟: macOS 26 (Tahoe) — Liquid Glass(`glassEffect`) 사용을 위해 macOS 26 이상 필요
 - 외부 의존성 없음(SPM 미사용). 순수 Apple 프레임워크만 사용.
 
 ## 코드 작업 워크플로우 (반드시 준수)

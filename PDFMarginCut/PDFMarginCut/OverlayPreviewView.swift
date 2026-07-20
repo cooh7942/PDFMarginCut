@@ -77,7 +77,7 @@ struct OverlayPreviewView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: panelSize.width, height: panelSize.height)
-                .background(Color.white)
+                .background(Color(nsColor: .windowBackgroundColor))
         } else {
             ZStack {
                 Color(nsColor: .windowBackgroundColor)

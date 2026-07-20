@@ -6,60 +6,56 @@ struct ContentView: View {
     @State private var vm = PDFMarginCutViewModel()
 
     var body: some View {
-        VStack(spacing: 0) {
-            titleBar
-            Divider()
+        Group {
             switch vm.appMode {
             case .crop:
                 previewArea
-                Divider()
-                controlBar
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .safeAreaInset(edge: .bottom) {
+                        controlBar
+                    }
             case .viewer:
                 ViewerView(vm: vm)
             }
         }
         .frame(minWidth: 800, minHeight: 600)
         .onDrop(of: [.fileURL], isTargeted: nil, perform: handleDrop)
-    }
-
-    // MARK: - Title Bar
-
-    private var titleBar: some View {
-        HStack {
-            Image(systemName: "doc.richtext")
-                .foregroundStyle(.secondary)
-            Text(vm.filename.isEmpty ? "PDFMarginCut" : vm.filename)
-                .font(.headline)
-            if vm.pageCount > 0 {
-                Text("— \(vm.pageCount)페이지")
-                    .foregroundStyle(.secondary)
-                    .font(.subheadline)
-            }
-
-            Spacer()
-
-            Picker("앱 모드", selection: $vm.appMode) {
-                ForEach(AppMode.allCases) { mode in
-                    Text(mode.rawValue).tag(mode)
+        .toolbar {
+            ToolbarItem(placement: .navigation) {
+                HStack(spacing: 6) {
+                    Image(systemName: "doc.richtext")
+                        .foregroundStyle(.secondary)
+                    Text(vm.filename.isEmpty ? "PDFMarginCut" : vm.filename)
+                        .font(.headline)
+                    if vm.pageCount > 0 {
+                        Text("· \(vm.pageCount)p")
+                            .foregroundStyle(.secondary)
+                            .font(.subheadline)
+                    }
                 }
             }
-            .pickerStyle(.segmented)
-            .frame(width: 140)
-            .labelsHidden()
-
-            Spacer()
-
+            ToolbarItem(placement: .principal) {
+                Picker("앱 모드", selection: $vm.appMode) {
+                    ForEach(AppMode.allCases) { mode in
+                        Text(mode.rawValue).tag(mode)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .frame(width: 140)
+                .labelsHidden()
+            }
             if vm.isGeneratingOverlay {
-                ProgressView()
-                    .scaleEffect(0.6)
-                    .padding(.trailing, 4)
-                Text("미리보기 생성 중...")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                ToolbarItem(placement: .primaryAction) {
+                    HStack(spacing: 4) {
+                        ProgressView()
+                            .scaleEffect(0.6)
+                        Text("생성 중…")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
     }
 
     // MARK: - Preview Area
@@ -174,8 +170,7 @@ struct ContentView: View {
                 .disabled(vm.document == nil || !hasCropRect)
                 .buttonStyle(.borderedProminent)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
+        .floatingBarStyle()
     }
 
     // MARK: - Computed Labels
@@ -222,6 +217,18 @@ struct ContentView: View {
             Task { @MainActor in vm.loadPDF(from: url) }
         }
         return true
+    }
+}
+
+// MARK: - Floating Bar Style
+
+extension View {
+    func floatingBarStyle() -> some View {
+        padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 18))
+            .padding(.horizontal, 12)
+            .padding(.bottom, 12)
     }
 }
 
