@@ -12,10 +12,27 @@ struct ViewerView: View {
     private let progressStore = ReadingProgressStore()
 
     var body: some View {
-        VStack(spacing: 0) {
+        ZStack(alignment: .bottom) {
             readerArea
-            Divider()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             viewerControlBar
+                .opacity(controlsVisible ? 1 : 0)
+                .animation(.easeInOut(duration: 0.2), value: controlsVisible)
+                .allowsHitTesting(controlsVisible)
+        }
+        .onContinuousHover { phase in
+            switch phase {
+            case .active:
+                withAnimation(.easeInOut(duration: 0.2)) { controlsVisible = true }
+                scheduleHide()
+            case .ended:
+                hideTask?.cancel()
+                withAnimation(.easeInOut(duration: 0.2)) { controlsVisible = false }
+            }
+        }
+        .onAppear {
+            controlsVisible = true
+            scheduleHide()
         }
     }
 
@@ -45,7 +62,7 @@ struct ViewerView: View {
                 } label: {
                     Image(systemName: "sidebar.left")
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.glass)
                 .help("썸네일 숨기기")
                 .padding(6)
             }
@@ -57,7 +74,7 @@ struct ViewerView: View {
                 Spacer()
             }
         }
-        .background(Color(nsColor: .windowBackgroundColor))
+        .glassEffect(.regular, in: RoundedRectangle(cornerRadius: 16))
     }
 
     // MARK: - Reader Content
@@ -78,16 +95,6 @@ struct ViewerView: View {
 
                 navOverlay
             }
-            .onContinuousHover { phase in
-                switch phase {
-                case .active:
-                    withAnimation(.easeInOut(duration: 0.2)) { controlsVisible = true }
-                    scheduleHide()
-                case .ended:
-                    hideTask?.cancel()
-                    withAnimation(.easeInOut(duration: 0.2)) { controlsVisible = false }
-                }
-            }
         } else {
             Text("PDF를 열어주세요")
                 .font(.title2)
@@ -99,16 +106,18 @@ struct ViewerView: View {
     // MARK: - Navigation Overlay
 
     private var navOverlay: some View {
-        HStack {
-            navButton(systemName: "chevron.left", enabled: controller.canGoPrevious) {
-                controller.goToPreviousPage()
+        GlassEffectContainer {
+            HStack {
+                navButton(systemName: "chevron.left", enabled: controller.canGoPrevious) {
+                    controller.goToPreviousPage()
+                }
+                Spacer()
+                navButton(systemName: "chevron.right", enabled: controller.canGoNext) {
+                    controller.goToNextPage()
+                }
             }
-            Spacer()
-            navButton(systemName: "chevron.right", enabled: controller.canGoNext) {
-                controller.goToNextPage()
-            }
+            .padding(.horizontal, 16)
         }
-        .padding(.horizontal, 16)
         .opacity(controlsVisible ? 1 : 0)
         .animation(.easeInOut(duration: 0.2), value: controlsVisible)
         .allowsHitTesting(controlsVisible)
@@ -118,11 +127,10 @@ struct ViewerView: View {
         Button(action: action) {
             Image(systemName: systemName)
                 .font(.system(size: 18, weight: .semibold))
-                .foregroundStyle(.white)
                 .frame(width: 44, height: 44)
-                .background(.black.opacity(0.4), in: Circle())
         }
         .buttonStyle(.plain)
+        .glassEffect(.regular.interactive(), in: Circle())
         .opacity(enabled ? 1 : 0.35)
         .disabled(!enabled)
     }
@@ -136,7 +144,7 @@ struct ViewerView: View {
             } label: {
                 Image(systemName: "sidebar.left")
             }
-            .buttonStyle(.plain)
+            .buttonStyle(.glass)
             .help(showThumbnails ? "썸네일 숨기기" : "썸네일 보기")
 
             Divider().frame(height: 22)
@@ -158,8 +166,7 @@ struct ViewerView: View {
 
             Spacer()
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
+        .floatingBarStyle()
     }
 
     // MARK: - Helpers

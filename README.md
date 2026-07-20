@@ -42,8 +42,8 @@ The app has two modes, switchable from the top of the window:
 
 ### Requirements
 
-- macOS 14 (Sonoma) or later
-- Xcode 16 or later (to build)
+- macOS 26 (Tahoe) or later
+- Xcode 26 or later (to build)
 
 ### Build & Run
 
@@ -128,8 +128,8 @@ _TBD._
 
 ### 요구 사항
 
-- macOS 14 (Sonoma) 이상
-- 빌드 시 Xcode 16 이상
+- macOS 26 (Tahoe) 이상
+- 빌드 시 Xcode 26 이상
 
 ### 빌드 & 실행
 
