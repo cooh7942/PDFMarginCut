@@ -177,11 +177,10 @@ final class PDFMarginCutViewModel {
             ctx.setFillColor(CGColor(red: 1, green: 1, blue: 1, alpha: 1))
             ctx.fill(CGRect(origin: .zero, size: imageSize))
 
-            let scaleX = imageSize.width  / pageSize.width
-            let scaleY = imageSize.height / pageSize.height
-
             for idx in sampled {
                 guard let page = doc.page(at: idx) else { continue }
+                let ps = page.bounds(for: .mediaBox).size
+                guard ps.width > 0, ps.height > 0 else { continue }
                 ctx.saveGState()
                 switch blendMode {
                 case .union:
@@ -192,7 +191,8 @@ final class PDFMarginCutViewModel {
                     let alpha: CGFloat = min(0.8, max(0.05, 1.0 / CGFloat(sampled.count) * 5))
                     ctx.setAlpha(alpha)
                 }
-                ctx.scaleBy(x: scaleX, y: scaleY)
+                // 각 페이지를 캔버스 전체에 매핑 — 페이지 크기가 달라도 흰 띠 없음
+                ctx.scaleBy(x: imageSize.width / ps.width, y: imageSize.height / ps.height)
                 page.draw(with: .mediaBox, to: ctx)
                 ctx.restoreGState()
             }

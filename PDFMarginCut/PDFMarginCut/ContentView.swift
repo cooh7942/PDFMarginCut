@@ -181,7 +181,7 @@ struct ContentView: View {
     private var allPageLabel: String {
         guard vm.pageCount > 0 else { return "" }
         let r = vm.resolvedPageRange()
-        return "Pages: \(r.start + 1)–\(r.end + 1)"
+        return "페이지: \(r.start + 1)–\(r.end + 1)"
     }
 
     private var oddPageLabel: String {

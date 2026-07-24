@@ -4,8 +4,8 @@ import PDFKit
 // MARK: - AppMode
 
 enum AppMode: String, CaseIterable, Identifiable {
-    case crop   = "Crop"
-    case viewer = "Viewer"
+    case crop   = "크롭"
+    case viewer = "뷰어"
 
     var id: String { rawValue }
 }
@@ -13,8 +13,8 @@ enum AppMode: String, CaseIterable, Identifiable {
 // MARK: - CropMode
 
 enum CropMode: String, CaseIterable, Identifiable {
-    case all = "All"
-    case oddEven = "Odd / Even"
+    case all     = "전체"
+    case oddEven = "홀·짝"
 
     var id: String { rawValue }
 }

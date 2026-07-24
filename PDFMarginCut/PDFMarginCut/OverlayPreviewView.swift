@@ -38,10 +38,10 @@ struct OverlayPreviewView: View {
                 if !pageLabel.isEmpty {
                     Text(pageLabel)
                         .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(.primary)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 2)
-                        .background(.regularMaterial)
+                        .background(.thickMaterial)
                         .clipShape(RoundedRectangle(cornerRadius: 4))
                         .padding(.bottom, 6)
                 }
@@ -78,6 +78,8 @@ struct OverlayPreviewView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: panelSize.width, height: panelSize.height)
+                .brightness(0.12)
+                .contrast(1.5)
                 .background(Color(nsColor: .windowBackgroundColor))
         } else {
             ZStack {
