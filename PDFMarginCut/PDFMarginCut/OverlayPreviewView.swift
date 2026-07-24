@@ -11,6 +11,7 @@ struct OverlayPreviewView: View {
     @Binding var normalizedRect: CGRect  // 0~1
     let pageLabel: String
     let isGenerating: Bool
+    var onOpen: (() -> Void)? = nil
 
     @State private var isDrawing = false
     @State private var drawStart: CGPoint = .zero
@@ -88,6 +89,11 @@ struct OverlayPreviewView: View {
                     Text("PDF를 열면 미리보기가 표시됩니다")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                    if let onOpen {
+                        Button("PDF 열기…") { onOpen() }
+                            .buttonStyle(.borderedProminent)
+                            .padding(.top, 4)
+                    }
                 }
             }
         }
