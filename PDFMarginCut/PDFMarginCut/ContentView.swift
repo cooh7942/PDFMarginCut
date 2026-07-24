@@ -67,7 +67,8 @@ struct ContentView: View {
                 overlayImage: vm.overlayImageAll,
                 normalizedRect: $vm.cropRectAll,
                 pageLabel: allPageLabel,
-                isGenerating: vm.isGeneratingOverlay
+                isGenerating: vm.isGeneratingOverlay,
+                onOpen: { vm.openPDF() }
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
@@ -80,7 +81,8 @@ struct ContentView: View {
                         overlayImage: vm.overlayImageOdd,
                         normalizedRect: $vm.cropRectOdd,
                         pageLabel: oddPageLabel,
-                        isGenerating: vm.isGeneratingOverlay
+                        isGenerating: vm.isGeneratingOverlay,
+                        onOpen: { vm.openPDF() }
                     )
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -95,7 +97,8 @@ struct ContentView: View {
                         overlayImage: vm.overlayImageEven,
                         normalizedRect: $vm.cropRectEven,
                         pageLabel: evenPageLabel,
-                        isGenerating: vm.isGeneratingOverlay
+                        isGenerating: vm.isGeneratingOverlay,
+                        onOpen: { vm.openPDF() }
                     )
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
